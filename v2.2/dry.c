@@ -731,8 +731,9 @@ main (argc, argv) int argc; char *argv[];
 
     printf ("Microseconds for one run through Dhrystone: ");
     printf ("%10.1f \n", Microseconds);
-    printf ("Dhrystones per Second:                      ");
-    printf ("%10.0f \n", Dhrystones_Per_Second);
+    printf("---- start test ----\n");
+    printf ("[dhrystone] drysone_p_sec %lu\n", (unsigned long) Dhrystones_Per_Second);
+    printf("---- stop test ----\n");
     printf ("\n");
   
 }
