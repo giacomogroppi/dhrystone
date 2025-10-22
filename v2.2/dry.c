@@ -549,6 +549,8 @@ main (argc, argv) int argc; char *argv[];
   REG   int             Run_Index;
   REG   int             Number_Of_Runs;
 
+  for (volatile long unsigned j = 0; j < (1UL << 30); j++) ;
+
   /* Arguments */
   if (argc > 2)
   {
@@ -732,7 +734,7 @@ main (argc, argv) int argc; char *argv[];
     printf ("Microseconds for one run through Dhrystone: ");
     printf ("%10.1f \n", Microseconds);
     printf("---- start test ----\n");
-    printf ("[dhrystone] drysone_p_sec %lu\n", (unsigned long) Dhrystones_Per_Second);
+    printf ("[dhrystone] drysone_p_sec_%d %lu\n", CONFIG_RAMSPEED_SIZE_MEMORY, (unsigned long) Dhrystones_Per_Second);
     printf("---- stop test ----\n");
     printf ("\n");
   
