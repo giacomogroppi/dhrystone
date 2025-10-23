@@ -532,6 +532,7 @@ float           Microseconds,
 
 /* end of variables for time measurement */
 
+extern void reboot_test_finished(void);
 
 main (argc, argv) int argc; char *argv[];
 /*****/
@@ -736,6 +737,7 @@ main (argc, argv) int argc; char *argv[];
     printf("---- start test ----\n");
     printf ("[dhrystone] drysone_p_sec_%d %lu\n", CONFIG_RAMSPEED_SIZE_MEMORY, (unsigned long) Dhrystones_Per_Second);
     printf("---- stop test ----\n");
+    reboot_test_finished();
     printf ("\n");
   
 }
