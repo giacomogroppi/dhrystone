@@ -609,8 +609,6 @@ main (argc, argv) int argc; char *argv[];
   printf("---- start test ----\n");
 
   for (unsigned iii = 0; iii < 1000; iii ++) {
-    Done = false;
-      while (!Done) {
 
 
         /***************/
@@ -672,8 +670,6 @@ main (argc, argv) int argc; char *argv[];
         Stop_Timer();
 
         User_Time = End_Time - Begin_Time;
-      }
-
    
     printf ("[dhrystone] drysone_%d %lu\n", CONFIG_RAMSPEED_SIZE_MEMORY, (unsigned long) User_Time);
     
