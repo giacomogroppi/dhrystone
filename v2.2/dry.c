@@ -603,8 +603,8 @@ main (argc, argv) int argc; char *argv[];
   printf ("Using %s, HZ=%d\n", CLOCK_TYPE, HZ);
   printf ("\n");
 
+  Number_Of_Runs = 1;
   printf ("Trying %d runs through Dhrystone:\n", Number_Of_Runs);
-
 
   printf("---- start test ----\n");
 
