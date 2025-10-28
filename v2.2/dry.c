@@ -398,8 +398,9 @@ extern long     time(); /* see library function "time"  */
 #define CLOCK_TYPE "MSC clock()"
 extern clock_t	clock();
 #define Too_Small_Time (2*HZ)
-#define Start_Timer() Begin_Time = clock()
-#define Stop_Timer()  End_Time   = clock()
+extern unsigned long get_current_nanosecond(void);
+#define Start_Timer() Begin_Time = get_current_nanosecond();
+#define Stop_Timer()  End_Time   = get_current_nanosecond();
 
 #else
                 /* Use times(2) time function unless    */
