@@ -607,7 +607,7 @@ main (argc, argv) int argc; char *argv[];
   Number_Of_Runs = 1;
   printf ("Trying %d runs through Dhrystone:\n", Number_Of_Runs);
 
-  for (volatile long unsigned iii = 0; iii < (1UL << 29); iii+);
+  for (volatile long unsigned iii = 0; iii < (1UL << 29); iii++);
 
   printf("---- start test ----\n");
 
