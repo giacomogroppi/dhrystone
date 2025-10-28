@@ -419,8 +419,11 @@ struct tms      time_info;
                 /* see library function "times" */
 #define Too_Small_Time (2*HZ)
                 /* Measurements should last at least about 2 seconds */
-#define Start_Timer() times(&time_info); Begin_Time=(long)time_info.tms_utime
-#define Stop_Timer()  times(&time_info); End_Time = (long)time_info.tms_utime
+
+extern unsigned long get_current_nanosecond(void);
+
+#define Start_Timer() Begin_Time = get_current_nanosecond();
+#define Stop_Timer()  End_Time   = get_current_nanosecond();
 
 #endif /* MSC_CLOCK */
 #endif /* TIME */
@@ -524,9 +527,7 @@ Enumeration     Func_1 ();
 
 Boolean		Done;
 
-long            Begin_Time,
-                End_Time,
-                User_Time;
+unsigned long Begin_Time, End_Time, User_Time;
 float           Microseconds,
                 Dhrystones_Per_Second;
 
@@ -602,13 +603,15 @@ main (argc, argv) int argc; char *argv[];
   printf ("Using %s, HZ=%d\n", CLOCK_TYPE, HZ);
   printf ("\n");
 
-   printf("---- start test ----\n");
+  printf ("Trying %d runs through Dhrystone:\n", Number_Of_Runs);
+
+
+  printf("---- start test ----\n");
 
   for (unsigned iii = 0; iii < 1000; iii ++) {
     Done = false;
       while (!Done) {
 
-        printf ("Trying %d runs through Dhrystone:\n", Number_Of_Runs);
 
         /***************/
         /* Start timer */
@@ -621,20 +624,20 @@ main (argc, argv) int argc; char *argv[];
 
           Proc_5();
           Proc_4();
-      /* Ch_1_Glob == 'A', Ch_2_Glob == 'B', Bool_Glob == true */
+          /* Ch_1_Glob == 'A', Ch_2_Glob == 'B', Bool_Glob == true */
           Int_1_Loc = 2;
           Int_2_Loc = 3;
           strcpy (Str_2_Loc, "DHRYSTONE PROGRAM, 2'ND STRING");
           Enum_Loc = Ident_2;
           Bool_Glob = ! Func_2 (Str_1_Loc, Str_2_Loc);
-      /* Bool_Glob == 1 */
+          /* Bool_Glob == 1 */
           while (Int_1_Loc < Int_2_Loc)  /* loop body executed once */
           {
-      Int_3_Loc = 5 * Int_1_Loc - Int_2_Loc;
-        /* Int_3_Loc == 7 */
-      Proc_7 (Int_1_Loc, Int_2_Loc, &Int_3_Loc);
-        /* Int_3_Loc == 7 */
-      Int_1_Loc += 1;
+            Int_3_Loc = 5 * Int_1_Loc - Int_2_Loc;
+              /* Int_3_Loc == 7 */
+            Proc_7 (Int_1_Loc, Int_2_Loc, &Int_3_Loc);
+              /* Int_3_Loc == 7 */
+            Int_1_Loc += 1;
           } /* while */
       /* Int_1_Loc == 3, Int_2_Loc == 3, Int_3_Loc == 7 */
           Proc_8 (Arr_1_Glob, Arr_2_Glob, Int_1_Loc, Int_3_Loc);
@@ -669,20 +672,10 @@ main (argc, argv) int argc; char *argv[];
         Stop_Timer();
 
         User_Time = End_Time - Begin_Time;
-
-        if (User_Time < Too_Small_Time)
-        {
-          printf ("Measured time too small to obtain meaningful results\n");
-          Number_Of_Runs = Number_Of_Runs * 10;
-          printf ("\n");
-        } else Done = true;
       }
 
-       Dhrystones_Per_Second = ((float) HZ * (float) Number_Of_Runs)
-                        / (float) User_Time;
-
    
-    printf ("[dhrystone] drysone_p_sec_%d %lu\n", CONFIG_RAMSPEED_SIZE_MEMORY, (unsigned long) Dhrystones_Per_Second);
+    printf ("[dhrystone] drysone_%d %lu\n", CONFIG_RAMSPEED_SIZE_MEMORY, (unsigned long) User_Time);
     
   }
   
