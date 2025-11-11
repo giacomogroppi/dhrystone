@@ -528,13 +528,21 @@ Enumeration     Func_1 ();
 
 Boolean		Done;
 
-unsigned long Begin_Time, End_Time, User_Time;
+unsigned long Begin_Time, End_Time, User_Time[1000];
 float           Microseconds,
                 Dhrystones_Per_Second;
 
 /* end of variables for time measurement */
 
 extern void reboot_test_finished(void);
+
+extern unsigned long get_l1_cache_misses(void);
+extern unsigned long get_l2_cache_misses(void);
+extern unsigned long get_l3_cache_misses(void);
+
+unsigned long l1_cache_miss[1000];
+  unsigned long l2_cache_miss[1000];
+  unsigned long l3_cache_miss[1000];
 
 main (argc, argv) int argc; char *argv[];
 /*****/
@@ -613,12 +621,18 @@ main (argc, argv) int argc; char *argv[];
   int warm_up = 10;
   int counter_warm_up = 0;
 
+  
+
   for (unsigned iii = 0; iii < 1000; iii ++) {
 
 
         /***************/
         /* Start timer */
         /***************/
+
+        l1_cache_miss[iii] = get_l1_cache_misses();
+        l2_cache_miss[iii] = get_l2_cache_misses();
+        l3_cache_miss[iii] = get_l3_cache_misses();
 
         Start_Timer();
 
@@ -642,29 +656,32 @@ main (argc, argv) int argc; char *argv[];
               /* Int_3_Loc == 7 */
             Int_1_Loc += 1;
           } /* while */
-      /* Int_1_Loc == 3, Int_2_Loc == 3, Int_3_Loc == 7 */
-          Proc_8 (Arr_1_Glob, Arr_2_Glob, Int_1_Loc, Int_3_Loc);
-      /* Int_Glob == 5 */
+          /* Int_1_Loc == 3, Int_2_Loc == 3, Int_3_Loc == 7 */
+            Proc_8 (Arr_1_Glob, Arr_2_Glob, Int_1_Loc, Int_3_Loc);
+          /* Int_Glob == 5 */
           Proc_1 (Ptr_Glob);
+          Stop_Timer();
+
           for (Ch_Index = 'A'; Ch_Index <= Ch_2_Glob; ++Ch_Index)
                 /* loop body executed twice */
           {
-      if (Enum_Loc == Func_1 (Ch_Index, 'C'))
-          /* then, not executed */
-        {
-        Proc_6 (Ident_1, &Enum_Loc);
-        strcpy (Str_2_Loc, "DHRYSTONE PROGRAM, 3'RD STRING");
-        Int_2_Loc = Run_Index;
-        Int_Glob = Run_Index;
-        }
-          }
-      /* Int_1_Loc == 3, Int_2_Loc == 3, Int_3_Loc == 7 */
+          
+              if (Enum_Loc == Func_1 (Ch_Index, 'C'))
+              /* then, not executed */
+              {
+                Proc_6 (Ident_1, &Enum_Loc);
+                strcpy (Str_2_Loc, "DHRYSTONE PROGRAM, 3'RD STRING");
+                Int_2_Loc = Run_Index;
+                Int_Glob = Run_Index;
+              }
+            }
+          /* Int_1_Loc == 3, Int_2_Loc == 3, Int_3_Loc == 7 */
           Int_2_Loc = Int_2_Loc * Int_1_Loc;
           Int_1_Loc = Int_2_Loc / Int_3_Loc;
           Int_2_Loc = 7 * (Int_2_Loc - Int_3_Loc) - Int_1_Loc;
-      /* Int_1_Loc == 1, Int_2_Loc == 13, Int_3_Loc == 7 */
+          /* Int_1_Loc == 1, Int_2_Loc == 13, Int_3_Loc == 7 */
           Proc_2 (&Int_1_Loc);
-      /* Int_1_Loc == 5 */
+          /* Int_1_Loc == 5 */
 
         } /* loop "for Run_Index" */
 
@@ -672,14 +689,20 @@ main (argc, argv) int argc; char *argv[];
         /* Stop timer */
         /**************/
 
-        Stop_Timer();
 
-        User_Time = End_Time - Begin_Time;
-   
-        if (counter_warm_up ++ > warm_up )
-          printf ("[dhrystone] dhrystone_%d %lu\n", CONFIG_RAMSPEED_SIZE_MEMORY, (unsigned long) User_Time);
+        User_Time[iii] = End_Time - Begin_Time;
+        l1_cache_miss[iii] = get_l1_cache_misses() - l1_cache_miss[iii];
+        l2_cache_miss[iii] = get_l2_cache_misses() - l2_cache_miss[iii];
+        l3_cache_miss[iii] = get_l3_cache_misses() - l3_cache_miss[iii];
   }
   
+    for (unsigned iii = 0; iii < 1000; iii ++) {
+      printf ("[dhrystone] dhrystone_%d %lu\n", CONFIG_RAMSPEED_SIZE_MEMORY, (unsigned long) User_Time[iii]);
+      printf ("[dhrystone] l1-cache-miss_%d %lu\n", CONFIG_RAMSPEED_SIZE_MEMORY, (unsigned long) l1_cache_miss[iii]);
+      printf ("[dhrystone] l2-cache-miss_%d %lu\n", CONFIG_RAMSPEED_SIZE_MEMORY, (unsigned long) l2_cache_miss[iii]);
+      printf ("[dhrystone] l3-cache-miss_%d %lu\n", CONFIG_RAMSPEED_SIZE_MEMORY, (unsigned long) l3_cache_miss[iii]);
+    }
+
 
    printf("---- stop test ----\n");
     reboot_test_finished();
